@@ -1,4 +1,4 @@
-ordp=== Cue ===
+=== Cue ===
 Contributors: audiotheme, bradyvercher, brodyvercher, thelukemcdonald
 Tags: playlist, audio, music, mp3, tracks, player
 Requires at least: 3.8
