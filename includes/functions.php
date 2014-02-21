@@ -12,6 +12,7 @@
  * Display a playlist.
  *
  * @since 1.0.0
+ * @todo Add an arg to specify a template path that doesn't exist in the /cue directory.
  *
  * @param mixed $post A post ID, WP_Post object or post slug.
  * @param array $args
@@ -24,11 +25,15 @@ function cue_playlist( $post, $args = array() ) {
 		$post = get_post( $post );
 	}
 
-	if ( ! $post ) {
+	if ( ! $post || 'cue_playlist' !== get_post_type( $post ) ) {
 		return;
 	}
 
 	$tracks = get_cue_playlist_tracks( $post );
+
+	if ( ! isset( $args['enqueue'] ) || $args['enqueue'] ) {
+		Cue::enqueue_assets();
+	}
 
 	$template_names = array(
 		"playlist-{$post->ID}.php",
@@ -45,36 +50,15 @@ function cue_playlist( $post, $args = array() ) {
 	$template_loader = new Cue_Template_Loader();
 	$template = $template_loader->locate_template( $template_names );
 
-	do_action( 'cue_before_playlist' );
+	echo '<div class="cue-playlist-container">';
 
-	include( $template );
+		do_action( 'cue_before_playlist', $post, $tracks );
 
-	do_action( 'cue_after_playlist' );
-}
+		include( $template );
 
-/**
- * Playlist shortcode handler.
- *
- * @since 1.0.0
- *
- * @param array $atts Optional. List of shortcode attributes.
- * @return string HTML output.
- */
-function cue_shortcode_handler( $atts = array() ) {
-	$atts = shortcode_atts(
-		array(
-			'id'       => 0,
-			'template' => '',
-		),
-		$atts
-	);
+		do_action( 'cue_after_playlist', $post, $tracks );
 
-	$id = $atts['id'];
-	unset( $atts['id'] );
-
-	ob_start();
-	cue_playlist( $id, $atts );
-	return ob_get_clean();
+	echo '</div>';
 }
 
 /**
@@ -146,4 +130,92 @@ function sanitize_cue_track( $track, $context = 'display' ) {
 	}
 
 	return apply_filters( 'cue_sanitize_track', $track, $context );
+}
+
+/**
+ * Display a theme-registered player.
+ *
+ * @since 1.1.0
+ *
+ * @param string $player_id Player ID.
+ * @param array $args
+ */
+function cue_player( $player_id, $args = array() ) {
+	$playlist_id = get_cue_player_playlist_id( $player_id );
+
+	$args = array(
+		'enqueue'  => false,
+		'template' => array(
+			"player-{$player_id}.php",
+			"player.php",
+		),
+	);
+
+	cue_playlist( $playlist_id, $args );
+}
+
+/**
+ * Retrieve a list of players registered by the current them.
+ *
+ * Includes the player id, name and associated playlist if one has been saved.
+ *
+ * @since 1.1.0
+ *
+ * @return array
+ */
+function get_cue_players() {
+	$players = array();
+	$assigned = get_theme_mod( 'cue_players', array() );
+
+	/**
+	 * List of registered players.
+	 *
+	 * Format: array( 'player_id' => 'Player Name' )
+	 *
+	 * @since 1.1.0
+	 *
+	 * @param array $players List of players.
+	 */
+	$registered = apply_filters( 'cue_players', array() );
+
+	if ( ! empty( $registered ) ) {
+		asort( $registered );
+		foreach ( $registered as $id => $name ) {
+			$playlist_id = isset( $assigned[ $id ] ) ? $assigned[ $id ] : 0;
+
+			$players[ $id ] = array(
+				'id'          => $id,
+				'name'        => $name,
+				'playlist_id' => $playlist_id,
+			);
+		}
+	}
+
+	return $players;
+}
+
+/**
+ * Retreive the ID of a playlist connected to a player.
+ *
+ * @since 1.1.0
+ *
+ * @param string $player_id Player ID.
+ * @return int
+ */
+function get_cue_player_playlist_id( $player_id ) {
+	$players = get_theme_mod( 'cue_players', array() );
+	return isset( $players[ $player_id ] ) ? $players[ $player_id ] : 0;
+}
+
+/**
+ * Retrieve playlist tracks for a registered player.
+ *
+ * @since 1.1.0
+ *
+ * @param string $player_id Player ID.
+ * @return array
+ */
+function get_cue_player_tracks( $player_id ) {
+	$playlist_id = get_cue_player_playlist_id( $player_id );
+	return get_cue_playlist_tracks( $playlist_id );
 }
