@@ -73,6 +73,17 @@ function cue_playlist( $post, $args = array() ) {
 function get_cue_playlist_tracks( $post = 0, $context = 'display' ) {
 	$playlist = get_post( $post );
 	$tracks = array_filter( (array) $playlist->tracks );
+
+	// Add the audio file extension as a key pointing to the audio url.
+	// Helpful for use with the jPlayer Playlist plugin.
+	foreach ( $tracks as $key => $track ) {
+		$parts = parse_url( $track['audioUrl'] );
+		if ( ! empty( $parts['path'] ) ) {
+			$ext = pathinfo( $parts['path'], PATHINFO_EXTENSION );
+			$tracks[ $key ][ $ext ] = $track['audioUrl'];
+		}
+	}
+
 	return apply_filters( 'cue_playlist_tracks', $tracks, $playlist, $context );
 }
 
@@ -213,9 +224,18 @@ function get_cue_player_playlist_id( $player_id ) {
  * @since 1.1.0
  *
  * @param string $player_id Player ID.
+ * @param array $args {
+ *     An array of arguments. Optional.
+ *
+ *     @type string $context Context to retrieve the tracks for. Defaults to display.
+ * }
  * @return array
  */
-function get_cue_player_tracks( $player_id ) {
+function get_cue_player_tracks( $player_id, $args = array() ) {
+	$args = wp_parse_args( $args, array(
+		'context' => 'display',
+	) );
+
 	$playlist_id = get_cue_player_playlist_id( $player_id );
-	return get_cue_playlist_tracks( $playlist_id );
+	return get_cue_playlist_tracks( $playlist_id, $args['context'] );
 }

@@ -30,6 +30,8 @@ class Cue {
 		add_action( 'init', array( $this, 'init' ), 15 );
 		add_action( 'widgets_init', array( $this, 'widgets_init' ) );
 		add_action( 'cue_after_playlist', array( $this, 'print_playlist_settings' ), 10, 2 );
+		add_action( 'cue_playlist_tracks', array( $this, 'wp_playlist_tracks_format' ), 10, 3 );
+		add_action( 'customize_register', array( $this, 'customize_register' ) );
 	}
 
 	/**
@@ -38,7 +40,7 @@ class Cue {
 	 * @since 1.0.0
 	 */
 	protected function load_textdomain() {
-		load_plugin_textdomain( 'cue', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
+		load_plugin_textdomain( 'cue', false, dirname( dirname( plugin_basename( __FILE__ ) ) ) . '/languages' );
 	}
 
 	/**
@@ -134,7 +136,7 @@ class Cue {
 			'pluginPath' => includes_url( 'js/mediaelement/', 'relative' ),
 			'l10n' => array(
 				'nextTrack'     => __( 'Next Track', 'cue' ),
-				'previousTrack' => __( 'Previous Track' ),
+				'previousTrack' => __( 'Previous Track', 'cue' ),
 			),
 		) );
 	}
@@ -198,5 +200,78 @@ class Cue {
 		?>
 		<script type="application/json" class="cue-playlist-data"><?php echo json_encode( $settings ); ?></script>
 		<?php
+	}
+
+	/**
+	 * Transform the Cue track syntax into the format used by WP Playlists.
+	 *
+	 * @since 1.1.1
+	 *
+	 * @param array $tracks Array of tracks.
+	 * @param WP_Post $playlist Playlist post object.
+	 * @param string $context Context the tracks will be used in.
+	 * @return array
+	 */
+	public function wp_playlist_tracks_format( $tracks, $playlist, $context ) {
+		if ( 'wp-playlist' == $context && ! empty( $tracks ) ) {
+			foreach ( $tracks as $key => $track ) {
+				$tracks[ $key ]['meta'] = array(
+					'artist'           => $track['artist'],
+					'length_formatted' => $track['length'],
+				);
+
+				$tracks[ $key ]['src'] = $track['audioUrl'];
+			}
+		}
+
+		return $tracks;
+	}
+
+	/**
+	 * Add a Customizer section for selecting playlists for registered players.
+	 *
+	 * @since 1.1.1
+	 *
+	 * @param WP_Customize_Manager $wp_customize Customizer instance.
+	 */
+	public function customize_register( $wp_customize ) {
+		$players = get_cue_players();
+
+		$playlists = get_posts( array(
+			'post_type'      => 'cue_playlist',
+			'posts_per_page' => -1,
+			'orderby'        => 'title',
+			'order'          => 'asc',
+		) );
+
+		if ( empty( $players ) || empty( $playlists ) ) {
+			return;
+		}
+
+		$wp_customize->add_section( 'cue', array(
+			'title'       => __( 'Cue Players', 'cue' ),
+			'description' => __( 'Choose a playlist for each registered player.', 'cue' ),
+			'priority'    => 115,
+		) );
+
+		// Create an array: ID => post_title
+		$playlists = array_combine( wp_list_pluck( $playlists, 'ID' ), wp_list_pluck( $playlists, 'post_title' ) );
+
+		foreach ( $players as $id => $player ) {
+			$id = sanitize_key( $id );
+
+			$wp_customize->add_setting( 'cue_players[' . $id . ']', array(
+				'capability'        => 'edit_theme_options',
+				'sanitize_callback' => 'absint',
+			) );
+
+			$wp_customize->add_control( 'cue_player_' . $id, array(
+				'choices'  => $playlists,
+				'label'    => $player['name'],
+				'section'  => 'cue',
+				'settings' => 'cue_players[' . $id . ']',
+				'type'     => 'select',
+			) );
+		}
 	}
 }
