@@ -1,0 +1,266 @@
+# Copyright (C) 2014 Cue
+# This file is distributed under the same license as the Cue package.
+msgid ""
+msgstr ""
+"Project-Id-Version: Cue 1.1.2\n"
+"Report-Msgid-Bugs-To: http://wordpress.org/support/plugin/cue\n"
+"POT-Creation-Date: 2014-07-30 21:27:34+00:00\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: 2014-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+
+#: admin/includes/class-cue-admin.php:49
+msgid "Players"
+msgstr ""
+
+#: admin/includes/class-cue-admin.php:59
+msgid "Shortcode"
+msgstr ""
+
+#: admin/includes/class-cue-admin.php:106
+#: admin/includes/class-cue-admin.php:122
+msgid "Add Tracks"
+msgstr ""
+
+#: admin/includes/class-cue-admin.php:107
+msgid "Add from URL"
+msgstr ""
+
+#: admin/includes/class-cue-admin.php:110
+msgid "Image Files"
+msgstr ""
+
+#: admin/includes/class-cue-admin.php:111
+msgid "Choose an Image"
+msgstr ""
+
+#: admin/includes/class-cue-admin.php:112
+msgid "Update Image"
+msgstr ""
+
+#: admin/includes/class-cue-admin.php:115
+#: admin/includes/class-cue-admin.php:120
+msgid "Audio Files"
+msgstr ""
+
+#: admin/includes/class-cue-admin.php:116
+msgid "Choose an Audio File"
+msgstr ""
+
+#: admin/includes/class-cue-admin.php:117
+msgid "Update Audio"
+msgstr ""
+
+#: admin/includes/class-cue-admin.php:121
+msgid "Choose Tracks"
+msgstr ""
+
+#: admin/includes/class-cue-admin.php:175
+msgid "Tracks"
+msgstr ""
+
+#: admin/includes/class-cue-admin.php:177
+msgid ""
+"Add tracks to the playlist, then drag and drop to reorder them. Click the "
+"arrow on the right of each item to reveal more configuration options."
+msgstr ""
+
+#: admin/includes/class-cue-admin.php:194
+msgid "Choose which players should use this playlist:"
+msgstr ""
+
+#: admin/includes/class-cue-admin.php:218
+msgid ""
+"Copy and paste the following shortcode into a post or page to embed this "
+"playlist."
+msgstr ""
+
+#: admin/includes/class-cue-admin.php:243
+#: admin/includes/class-cue-admin.php:246
+msgid "Playlist updated."
+msgstr ""
+
+#: admin/includes/class-cue-admin.php:244
+msgid "Custom field updated."
+msgstr ""
+
+#: admin/includes/class-cue-admin.php:245
+msgid "Custom field deleted."
+msgstr ""
+
+#: admin/includes/class-cue-admin.php:248
+#. translators: %s: date and time of the revision
+msgid "Playlist restored to revision from %s"
+msgstr ""
+
+#: admin/includes/class-cue-admin.php:250
+msgid "Playlist published."
+msgstr ""
+
+#: admin/includes/class-cue-admin.php:251
+msgid "Playlist saved."
+msgstr ""
+
+#: admin/includes/class-cue-admin.php:252
+msgid "Playlist submitted."
+msgstr ""
+
+#: admin/includes/class-cue-admin.php:253
+msgid "Playlist scheduled for: <strong>%1$s</strong>."
+msgstr ""
+
+#: admin/includes/class-cue-admin.php:255
+#. translators: Publish box date format, see http:php.net/date
+msgid "M j, Y @ G:i"
+msgstr ""
+
+#: admin/includes/class-cue-admin.php:256
+msgid "Playlist draft updated."
+msgstr ""
+
+#: admin/includes/class-cue-admin.php:263
+msgid "View playlist"
+msgstr ""
+
+#: admin/includes/class-cue-admin.php:272
+msgid "Preview Playlist"
+msgstr ""
+
+#: admin/includes/templates.php:13 includes/class-cue-widget-playlist.php:92
+msgid "Title:"
+msgstr ""
+
+#: admin/includes/templates.php:14
+msgid "Title"
+msgstr ""
+
+#: admin/includes/templates.php:19
+msgid "Artist:"
+msgstr ""
+
+#: admin/includes/templates.php:20
+msgid "Artist"
+msgstr ""
+
+#: admin/includes/templates.php:30
+msgid "Length:"
+msgstr ""
+
+#: admin/includes/templates.php:31
+msgid "Length"
+msgstr ""
+
+#: admin/includes/templates.php:40
+msgid "Remove"
+msgstr ""
+
+#: admin/includes/templates.php:41
+msgid "Close"
+msgstr ""
+
+#: admin/includes/templates.php:53
+msgid "Select Audio"
+msgstr ""
+
+#: includes/class-cue-widget-playlist.php:28
+msgid "Playlist"
+msgstr ""
+
+#: includes/class-cue-widget-playlist.php:32
+msgid "A list of songs"
+msgstr ""
+
+#: includes/class-cue-widget-playlist.php:96
+msgid "Playlist:"
+msgstr ""
+
+#: includes/class-cue.php:90
+msgid "Add New Playlist"
+msgstr ""
+
+#: includes/class-cue.php:91
+msgid "Edit Playlist"
+msgstr ""
+
+#: includes/class-cue.php:92
+msgid "New Playlist"
+msgstr ""
+
+#: includes/class-cue.php:93
+msgid "View Playlist"
+msgstr ""
+
+#: includes/class-cue.php:94
+msgid "Search Playlists"
+msgstr ""
+
+#: includes/class-cue.php:95
+msgid "No playlists found."
+msgstr ""
+
+#: includes/class-cue.php:96
+msgid "No playlists found in Trash."
+msgstr ""
+
+#: includes/class-cue.php:97
+msgid "All Playlists"
+msgstr ""
+
+#: includes/class-cue.php:98
+msgid "Playlists"
+msgstr ""
+
+#: includes/class-cue.php:138
+msgid "Next Track"
+msgstr ""
+
+#: includes/class-cue.php:139
+msgid "Previous Track"
+msgstr ""
+
+#: includes/class-cue.php:252
+msgid "Cue Players"
+msgstr ""
+
+#: includes/class-cue.php:253
+msgid "Choose a playlist for each registered player."
+msgstr ""
+
+#. Plugin Name of the plugin/theme
+msgid "Cue"
+msgstr ""
+
+#. Author URI of the plugin/theme
+msgid "http://audiotheme.com/"
+msgstr ""
+
+#. Description of the plugin/theme
+msgid "Create beautiful, fully responsive audio playlists."
+msgstr ""
+
+#. Author of the plugin/theme
+msgid "AudioTheme"
+msgstr ""
+
+#: includes/class-cue.php:87
+msgctxt "post format general name"
+msgid "Playlists"
+msgstr ""
+
+#: includes/class-cue.php:88
+msgctxt "post format singular name"
+msgid "Playlist"
+msgstr ""
+
+#: includes/class-cue.php:89
+msgctxt "playlist"
+msgid "Add New"
+msgstr ""
+
+#: includes/class-cue.php:99
+msgctxt "add new on admin bar"
+msgid "Playlist"
+msgstr ""
