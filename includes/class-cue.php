@@ -29,8 +29,8 @@ class Cue {
 
 		add_action( 'init', array( $this, 'init' ), 15 );
 		add_action( 'widgets_init', array( $this, 'widgets_init' ) );
-		add_action( 'cue_after_playlist', array( $this, 'print_playlist_settings' ), 10, 2 );
-		add_action( 'cue_playlist_tracks', array( $this, 'wp_playlist_tracks_format' ), 10, 3 );
+		add_action( 'cue_after_playlist', array( $this, 'print_playlist_settings' ), 10, 3 );
+		add_filter( 'cue_playlist_tracks', array( $this, 'wp_playlist_tracks_format' ), 10, 3 );
 		add_action( 'customize_register', array( $this, 'customize_register' ) );
 	}
 
@@ -127,16 +127,18 @@ class Cue {
 	 * @since 1.0.0
 	 */
 	protected function register_assets() {
-		wp_register_style( 'cue', CUE_URL . 'assets/styles/cue.min.css', array( 'mediaelement' ), '1.0.0' );
+		wp_register_style( 'cue', CUE_URL . 'assets/css/cue.min.css', array( 'mediaelement' ), '1.0.0' );
 
-		wp_register_script( 'cue', CUE_URL . 'assets/scripts/cue.min.js', array( 'cue-vague', 'jquery', 'mediaelement' ), '1.0.0', true );
-		wp_register_script( 'cue-vague', CUE_URL . 'assets/scripts/vendor/Vague.js', array( 'jquery' ), '1.0.0', true );
+		wp_register_script( 'jquery-cue', CUE_URL . 'assets/js/vendor/jquery.cue.min.js', array( 'jquery', 'mediaelement' ), '1.0.0', true );
+		wp_register_script( 'cue', CUE_URL . 'assets/js/cue.min.js', array( 'cue-vague', 'jquery-cue' ), '1.0.0', true );
+		wp_register_script( 'cue-vague', CUE_URL . 'assets/js/vendor/Vague.js', array( 'jquery' ), '1.0.0', true );
 
 		wp_localize_script( 'cue', '_cueSettings', array(
-			'pluginPath' => includes_url( 'js/mediaelement/', 'relative' ),
 			'l10n' => array(
-				'nextTrack'     => __( 'Next Track', 'cue' ),
-				'previousTrack' => __( 'Previous Track', 'cue' ),
+				'nextTrack'      => __( 'Next Track', 'cue' ),
+				'previousTrack'  => __( 'Previous Track', 'cue' ),
+				'togglePlayer'   => __( 'Toggle Player', 'cue' ),
+				'togglePlaylist' => __( 'Toggle Playlist', 'cue' ),
 			),
 		) );
 	}
@@ -165,7 +167,8 @@ class Cue {
 				'id'       => 0,
 				'template' => '',
 			),
-			$atts
+			$atts,
+			'cue'
 		);
 
 		$id = $atts['id'];
@@ -183,8 +186,9 @@ class Cue {
 	 *
 	 * @param WP_Post $playlist Playlist post object.
 	 * @param array $tracks List of tracks.
+	 * @param array $args
 	 */
-	public function print_playlist_settings( $playlist, $tracks ) {
+	public function print_playlist_settings( $playlist, $tracks, $args ) {
 		$thumbnail = '';
 		if ( has_post_thumbnail( $playlist->ID ) ) {
 			$thumbnail_id = get_post_thumbnail_id( $playlist->ID );
@@ -193,10 +197,15 @@ class Cue {
 			$thumbnail = $image[0];
 		}
 
-		$settings = apply_filters( 'cue_playlist_settings', array(
-			'thumbnail' => $thumbnail,
-			'tracks'    => $tracks,
-		) );
+		$settings = apply_filters(
+			'cue_playlist_settings',
+			array(
+				'thumbnail' => $thumbnail,
+				'tracks'    => $tracks,
+			),
+			$playlist,
+			$args
+		);
 		?>
 		<script type="application/json" class="cue-playlist-data"><?php echo json_encode( $settings ); ?></script>
 		<?php
@@ -213,7 +222,7 @@ class Cue {
 	 * @return array
 	 */
 	public function wp_playlist_tracks_format( $tracks, $playlist, $context ) {
-		if ( 'wp-playlist' == $context && ! empty( $tracks ) ) {
+		if ( ! empty( $tracks ) ) { // 'wp-playlist' == $context &&
 			foreach ( $tracks as $key => $track ) {
 				$tracks[ $key ]['meta'] = array(
 					'artist'           => $track['artist'],
@@ -221,6 +230,7 @@ class Cue {
 				);
 
 				$tracks[ $key ]['src'] = $track['audioUrl'];
+				$tracks[ $key ]['thumb']['src'] = $track['artworkUrl'];
 			}
 		}
 
@@ -256,6 +266,7 @@ class Cue {
 
 		// Create an array: ID => post_title
 		$playlists = array_combine( wp_list_pluck( $playlists, 'ID' ), wp_list_pluck( $playlists, 'post_title' ) );
+		$playlists = array( 0 => '' ) + $playlists;
 
 		foreach ( $players as $id => $player ) {
 			$id = sanitize_key( $id );
