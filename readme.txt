@@ -22,6 +22,8 @@ Cue gives you the ability to easily create stylish playlists and display them an
 
 Cue was originally built for the [AudioTheme Framework](http://audiotheme.com/), but we wanted everyone to have the ability to easily create beautiful playlists, so we're releasing it free for general use. Additional integration is built into our framework to extend Cue and allow tracks in your discography to be used as sources for playlist tracks.
 
+For an example of how Cue can be extended, check out [CueBar, a jukebox audio player](http://demo.audiotheme.com/cuebar/) made for WordPress.
+
 = Support Policy =
 
 We'll do our best to keep this plugin up to date, fix bugs and implement features when possible, but technical support will only be provided for active AudioTheme customers. If you enjoy this plugin and would like to support its development, you can:
@@ -65,6 +67,12 @@ For more fine-grained control over where the playlist appears, a template tag is
 3. Playlist display on small screens and sidebar widgets.
 
 == Changelog ==
+
+= 1.2.2 =
+* Fixed the feature that allowed the background image to be used as the default track artwork.
+
+= 1.2.1 =
+* Fixed the background image based on the post thumbnail feature.
 
 = 1.2.0 =
 * Added Brazilian Portuguese translation.
