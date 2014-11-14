@@ -44,9 +44,9 @@ window.cue = window.cue || {};
 		var result = false;
 		try {
 			result = 'SVGFEColorMatrixElement' in window && 2 === SVGFEColorMatrixElement.SVG_FECOLORMATRIX_TYPE_SATURATE;
-		}
-		catch( e ) {}
-		return result;
+		} catch( e ) {}
+		// IE doesn't support SVG filters on HTML elements.
+		return result && ! /(MSIE|Trident)/.test( window.navigator.userAgent );
 	}());
 
 	$html.toggleClass( 'no-css-filters', ! cue.settings.hasCssFilters ).toggleClass( 'no-svg-filters', ! cue.settings.hasSvgFilters );
@@ -56,7 +56,7 @@ window.cue = window.cue || {};
 		// Initialize the playlists.
 		$( '.cue-playlist' ).each(function() {
 			var $playlist = $( this ),
-				$data = $playlist.find( '.cue-playlist-data' ),
+				$data = $playlist.closest( '.cue-playlist-container' ).find( '.cue-playlist-data' ),
 				backgroundUrl = '',
 				data;
 
@@ -67,6 +67,16 @@ window.cue = window.cue || {};
 				if ( 'thumbnail' in data ) {
 					backgroundUrl = data.thumbnail;
 				}
+			}
+
+			if ( ! cue.settings.hasCssFilters && cue.settings.hasSvgFilters ) {
+				if ( ! $( '#cue-filter-blur' ).length ) {
+					$( 'body' ).append( '<svg style="position: absolute"><filter id="cue-filter-blur"><feGaussianBlur class="blur" stdDeviation="20" color-interpolation-filters="sRGB"/></filter></svg>' );
+				}
+
+				$playlist.on( 'backgroundCreate.cue', function( e, player ) {
+					player.container.find( '.mejs-player-background' ).css( 'filter', 'url(#cue-filter-blur)' );
+				});
 			}
 
 			$playlist.cuePlaylist({
@@ -103,8 +113,6 @@ window.cue = window.cue || {};
 					type: 'max-width',
 					size: 200
 				}]
-			}).find( '.cue-audio' ).on( 'backgroundCreate.cue', function( e, player ) {
-				player.container.find( '.mejs-player-background' ).Vague({ intensity: 10 }).blur();
 			});
 		});
 	});
