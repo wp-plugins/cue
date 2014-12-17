@@ -2,7 +2,7 @@
 Contributors: audiotheme, bradyvercher, brodyvercher, thelukemcdonald
 Tags: playlist, audio, music, mp3, tracks, player
 Requires at least: 3.8
-Tested up to: 4.0
+Tested up to: 4.1
 Stable tag: trunk
 License: GPL-2.0+
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -21,6 +21,8 @@ Cue gives you the ability to easily create stylish playlists and display them an
 = AudioTheme Integration =
 
 Cue was originally built for the [AudioTheme Framework](http://audiotheme.com/), but we wanted everyone to have the ability to easily create beautiful playlists, so we're releasing it free for general use. Additional integration is built into our framework to extend Cue and allow tracks in your discography to be used as sources for playlist tracks.
+
+For an example of how Cue can be extended, check out [CueBar, a jukebox audio player](http://demo.audiotheme.com/cuebar/) made for WordPress.
 
 = Support Policy =
 
@@ -65,6 +67,35 @@ For more fine-grained control over where the playlist appears, a template tag is
 3. Playlist display on small screens and sidebar widgets.
 
 == Changelog ==
+
+= 1.2.6 =
+* Added previews for the shortcode in the visual editor.
+* Fixed an error in the Customizer when there weren't any published playlists.
+* Fixed the allowed file types when uploading.
+* Fixed the SVG blur filter when previewing in the Customizer.
+* Updated jquery.cue.js to 1.1.3
+
+= 1.2.5 =
+* Fixed bug that caused playlists in widgets to disappear.
+* Hide the previous and next track buttons when a playlist only has one track.
+
+= 1.2.4 =
+* Added a 'show_playlist' shortcode attribute to toggle the playlist visibility.
+* Absolutely positioned the SVG filter to remove it from the document flow and prevent it from creating empty space in some browsers.
+* Added a message in the Customizer for registered players if a playlist hasn't been published yet.
+* Updated jquery.cue.js to 1.1.1
+
+= 1.2.3 =
+* Fixed the blur effect in Firefox.
+* Created a solution that should provide a blur alternative in IE.
+* Removed the blur script dependency in favor of an SVG filter.
+* Switched to inline styles to size audio elements instead of invalid attributes.
+
+= 1.2.2 =
+* Fixed the feature that allowed the background image to be used as the default track artwork.
+
+= 1.2.1 =
+* Fixed the background image based on the post thumbnail feature.
 
 = 1.2.0 =
 * Added Brazilian Portuguese translation.
