@@ -129,7 +129,7 @@ class Cue {
 	protected function register_assets() {
 		wp_register_style( 'cue', CUE_URL . 'assets/css/cue.min.css', array( 'mediaelement' ), '1.0.0' );
 
-		wp_register_script( 'jquery-cue', CUE_URL . 'assets/js/vendor/jquery.cue.min.js', array( 'jquery', 'mediaelement' ), '1.1.0', true );
+		wp_register_script( 'jquery-cue', CUE_URL . 'assets/js/vendor/jquery.cue.min.js', array( 'jquery', 'mediaelement' ), '1.1.3', true );
 		wp_register_script( 'cue', CUE_URL . 'assets/js/cue.min.js', array( 'jquery-cue' ), '1.0.0', true );
 
 		wp_localize_script( 'cue', '_cueSettings', array(
@@ -268,14 +268,17 @@ class Cue {
 		) );
 
 		if ( empty( $playlists ) ) {
+			$playlists = array();
+
 			$description = sprintf(
 				__( '<a href="%s">Create a playlist</a> for this player.', 'cue' ),
 				'http://192.168.1.20/americanaura/wordpress/wp-admin/post-new.php?post_type=cue_playlist'
 			);
+		} else {
+			// Create an array: ID => post_title
+			$playlists = array_combine( wp_list_pluck( $playlists, 'ID' ), wp_list_pluck( $playlists, 'post_title' ) );
 		}
 
-		// Create an array: ID => post_title
-		$playlists = array_combine( wp_list_pluck( $playlists, 'ID' ), wp_list_pluck( $playlists, 'post_title' ) );
 		$playlists = array( 0 => '' ) + $playlists;
 
 		foreach ( $players as $id => $player ) {
