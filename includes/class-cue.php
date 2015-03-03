@@ -129,9 +129,8 @@ class Cue {
 	protected function register_assets() {
 		wp_register_style( 'cue', CUE_URL . 'assets/css/cue.min.css', array( 'mediaelement' ), '1.0.0' );
 
-		wp_register_script( 'jquery-cue', CUE_URL . 'assets/js/vendor/jquery.cue.min.js', array( 'jquery', 'mediaelement' ), '1.0.0', true );
-		wp_register_script( 'cue', CUE_URL . 'assets/js/cue.min.js', array( 'cue-vague', 'jquery-cue' ), '1.0.0', true );
-		wp_register_script( 'cue-vague', CUE_URL . 'assets/js/vendor/Vague.js', array( 'jquery' ), '1.0.0', true );
+		wp_register_script( 'jquery-cue', CUE_URL . 'assets/js/vendor/jquery.cue.min.js', array( 'jquery', 'mediaelement' ), '1.1.3', true );
+		wp_register_script( 'cue', CUE_URL . 'assets/js/cue.min.js', array( 'jquery-cue' ), '1.0.0', true );
 
 		wp_localize_script( 'cue', '_cueSettings', array(
 			'l10n' => array(
@@ -164,8 +163,9 @@ class Cue {
 	public function cue_shortcode_handler( $atts = array() ) {
 		$atts = shortcode_atts(
 			array(
-				'id'       => 0,
-				'template' => '',
+				'id'            => 0,
+				'show_playlist' => true,
+				'template'      => '',
 			),
 			$atts,
 			'cue'
@@ -173,6 +173,8 @@ class Cue {
 
 		$id = $atts['id'];
 		unset( $atts['id'] );
+
+		$atts['show_playlist'] = $this->shortcode_bool( $atts['show_playlist'] );
 
 		ob_start();
 		cue_playlist( $id, $atts );
@@ -245,7 +247,12 @@ class Cue {
 	 * @param WP_Customize_Manager $wp_customize Customizer instance.
 	 */
 	public function customize_register( $wp_customize ) {
-		$players = get_cue_players();
+		$description = '';
+		$players     = get_cue_players();
+
+		if ( empty( $players ) ) {
+			return;
+		}
 
 		$playlists = get_posts( array(
 			'post_type'      => 'cue_playlist',
@@ -254,18 +261,24 @@ class Cue {
 			'order'          => 'asc',
 		) );
 
-		if ( empty( $players ) || empty( $playlists ) ) {
-			return;
-		}
-
 		$wp_customize->add_section( 'cue', array(
 			'title'       => __( 'Cue Players', 'cue' ),
 			'description' => __( 'Choose a playlist for each registered player.', 'cue' ),
 			'priority'    => 115,
 		) );
 
-		// Create an array: ID => post_title
-		$playlists = array_combine( wp_list_pluck( $playlists, 'ID' ), wp_list_pluck( $playlists, 'post_title' ) );
+		if ( empty( $playlists ) ) {
+			$playlists = array();
+
+			$description = sprintf(
+				__( '<a href="%s">Create a playlist</a> for this player.', 'cue' ),
+				admin_url( 'post-new.php?post_type=cue_playlist' )
+			);
+		} else {
+			// Create an array: ID => post_title
+			$playlists = array_combine( wp_list_pluck( $playlists, 'ID' ), wp_list_pluck( $playlists, 'post_title' ) );
+		}
+
 		$playlists = array( 0 => '' ) + $playlists;
 
 		foreach ( $players as $id => $player ) {
@@ -277,12 +290,27 @@ class Cue {
 			) );
 
 			$wp_customize->add_control( 'cue_player_' . $id, array(
-				'choices'  => $playlists,
-				'label'    => $player['name'],
-				'section'  => 'cue',
-				'settings' => 'cue_players[' . $id . ']',
-				'type'     => 'select',
+				'choices'     => $playlists,
+				'description' => $description,
+				'label'       => $player['name'],
+				'section'     => 'cue',
+				'settings'    => 'cue_players[' . $id . ']',
+				'type'        => 'select',
 			) );
 		}
+	}
+
+	/**
+	 * Helper method to determine if a shortcode attribute is true or false.
+	 *
+	 * @since 1.2.4
+	 *
+	 * @param string|int|bool $var Attribute value.
+	 *
+	 * @return bool
+	 */
+	protected function shortcode_bool( $var ) {
+		$falsey = array( 'false', '0', 'no', 'n' );
+		return ( ! $var || in_array( strtolower( $var ), $falsey ) ) ? false : true;
 	}
 }
