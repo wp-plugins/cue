@@ -22,6 +22,7 @@ class Cue_Admin {
 	 */
 	public function load() {
 		add_action( 'admin_head', array( $this, 'admin_head' ) );
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_edit_assets' ) );
 		add_filter( 'wp_prepare_attachment_for_js', array( $this, 'prepare_audio_attachment_for_js' ), 20, 3 );
 		add_filter( 'wp_prepare_attachment_for_js', array( $this, 'prepare_image_attachment_for_js' ), 20, 3 );
 
@@ -31,6 +32,7 @@ class Cue_Admin {
 
 		add_action( 'wp_ajax_cue_get_playlist', 'cue_ajax_get_playlist' );
 		add_action( 'wp_ajax_cue_save_playlist_tracks', 'cue_ajax_save_playlist_tracks' );
+		add_action( 'wp_ajax_cue_parse_shortcode', 'cue_ajax_parse_shortcode' );
 	}
 
 	/**
@@ -66,6 +68,25 @@ class Cue_Admin {
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_playlist_edit_assets' ) );
 		add_action( 'edit_form_after_title', array( $this, 'display_playlist_edit_view' ) );
 		add_action( 'admin_footer', array( $this, 'print_playlist_edit_templates' ) );
+	}
+
+	/**
+	 * Enqueue a script for rendering the Cue shortcode in the editor.
+	 *
+	 * @since 1.2.9
+	 */
+	public function enqueue_edit_assets( $hook_suffix ) {
+		if ( 'post.php' !== $hook_suffix && 'post-new.php' !== $hook_suffix ) {
+			return;
+		}
+
+		wp_enqueue_script(
+			'cue-mce-view',
+			CUE_URL . 'admin/assets/js/mce-view.js',
+			array( 'jquery', 'mce-view', 'underscore' ),
+			'1.0.0',
+			true
+		);
 	}
 
 	/**
